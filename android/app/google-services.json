@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "535406273365",
+    "project_id": "uzeit-c5352",
+    "storage_bucket": "uzeit-c5352.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:535406273365:android:54ad43be11e5d5506745dc",
+        "android_client_info": {
+          "package_name": "com.example.uzit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "535406273365-80d4c0c5o6chr1mqu72rr381stbolrqo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCsnvZEn8PruAyIihw5-p32HqStrm-LYfw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "535406273365-80d4c0c5o6chr1mqu72rr381stbolrqo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
