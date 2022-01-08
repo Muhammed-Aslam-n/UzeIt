@@ -10,14 +10,9 @@ import 'package:uzit/screens/updateprofile.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp().then((value) => Get.put(AuthController()));
-  await getPic();
   runApp(const Uzit());
 }
 
-Future getPic() async{
-  final controller = Get.find<AuthController>();
-  await controller.getProfilePic();
-}
 
 
 class Uzit extends StatelessWidget {

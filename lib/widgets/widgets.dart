@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:uzit/constants/constants.dart';
+import 'package:wc_form_validators/wc_form_validators.dart';
 
 class CommonHeaders extends StatelessWidget {
   final String? text;
@@ -90,15 +92,17 @@ class CommonTextField extends StatelessWidget {
         ],
       ),
       child: TextFormField(
+        style: TextStyle(color: Colors.grey.withOpacity(0.7)),
         controller: controller,
         textInputAction: TextInputAction.next,
         obscureText: obscureText,
         decoration: InputDecoration(
+          fillColor: Colors.white,
           floatingLabelBehavior: FloatingLabelBehavior.never,
           focusedBorder: tfOutlineBorder,
           enabledBorder: tfOutlineBorder,
           prefixIcon: prefixIcon,
-          label: Text(label ?? ''),
+          label: Text(label ?? '',style: TextStyle(color: Colors.grey.withOpacity(0.2)),),
         ),
       ),
     );
@@ -108,34 +112,56 @@ class CommonTextField extends StatelessWidget {
 class DataTextFields extends StatelessWidget {
   final String? labelText, errorText;
   final Icon? icon;
+  final int? minLength,maxLength;
+  final bool ismaxLength;
   final TextEditingController? controller;
+  final List<TextInputFormatter>? inputFormatters;
+  final TextInputType? textInputType;
 
   const DataTextFields(
-      {Key? key, this.labelText, this.errorText, this.controller, this.icon})
+      {Key? key,
+      this.labelText,
+      this.errorText,
+      this.controller,
+      this.icon,
+      this.inputFormatters,
+      this.minLength,
+      this.ismaxLength = false, this.textInputType, this.maxLength})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.05,
+      height: MediaQuery.of(context).size.height * 0.07,
       width: MediaQuery.of(context).size.width * 0.8,
       child: TextFormField(
-        autovalidateMode: AutovalidateMode.disabled,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         controller: controller,
+        keyboardType: textInputType??TextInputType.name,
         decoration: InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.never,
-          focusedBorder: tfOutlineBorder,
+          focusedBorder: OutlineInputBorder(
+            borderRadius: tfRadius,
+            borderSide: BorderSide(
+              color: HexColor("#252942"),
+              width: 1,
+            ),
+          ),
           enabledBorder: tfOutlineBorder,
           labelText: labelText,
           prefixIcon: icon,
         ),
-        validator: (_val) {
-          if (_val!.isEmpty) {
-            return errorText;
-          } else {
-            return null;
-          }
-        },
+        inputFormatters: inputFormatters,
+        validator: Validators.compose(
+          [
+            Validators.required("$labelText is required"),
+            Validators.minLength(
+                minLength ?? 1,"$labelText must be greater than $minLength characters"),
+            ismaxLength
+                ? Validators.maxLength(maxLength??3,"$labelText must be less than ${maxLength??3} digits")
+                : Validators.maxLength(150,"$labelText must be less than 150")
+          ],
+        ),
       ),
     );
   }

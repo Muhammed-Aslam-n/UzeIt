@@ -1,11 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:fluttericon/linearicons_free_icons.dart';
 import 'package:uzit/constants/constants.dart';
 import 'package:uzit/controllers/auth_controller.dart';
 import 'package:uzit/widgets/widgets.dart';
 import 'package:get/get.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class UpdateProfile extends StatefulWidget {
   const UpdateProfile({Key? key}) : super(key: key);
@@ -15,7 +14,11 @@ class UpdateProfile extends StatefulWidget {
 }
 
 class _UpdateProfileState extends State<UpdateProfile> {
-  final controller = Get.find<AuthController>();
+  @override
+  void initState() {
+    AuthController.authController.readUsers();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,17 +48,20 @@ class _UpdateProfileState extends State<UpdateProfile> {
                 id: "profileArea",
                 builder: (controller) => Stack(
                   children: [
-                    controller.currentProfilePicture != ""
-                        ? SizedBox(
-                            height: height * 0.28,
-                            width: width * 0.28,
-                            child: CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                    "${controller.currentProfilePicture}")),
+                    controller.currentProfilePicture != null
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(500),
+                            child: FadeInImage(
+                              fit: BoxFit.cover,
+                              placeholder:
+                                  const AssetImage("assets/giphy/loadingGiphy.gif"),
+                              image: NetworkImage(
+                                  controller.currentProfilePicture!),
+                            ),
                           )
                         : SizedBox(
-                            height: height * 0.18,
-                            width: width * 0.18,
+                            height: height * 0.28,
+                            width: width * 0.28,
                             child: const CircleAvatar(
                               backgroundImage: AssetImage(
                                   "assets/images/profile/noProfilePictureImage.png"),
@@ -87,38 +93,72 @@ class _UpdateProfileState extends State<UpdateProfile> {
               ),
             ),
             const SizedBox(
-              height: 30,
+              height: 10,
             ),
             CommonTextField(
+              controller: AuthController.authController.userNameToRegister,
               prefixIcon: Icon(
-                Icons.email,
+                Icons.person,
                 color: Colors.white.withOpacity(0.5),
               ),
               bgColor: HexColor("#252942"),
               blurRadius: 0,
               spreadRadius: 0,
+              label: "Name",
             ),
             sizedh2,
             CommonTextField(
+              controller: AuthController.authController.userSubject,
               prefixIcon: Icon(
-                Icons.lock,
+                Icons.subject,
                 color: Colors.white.withOpacity(0.5),
               ),
               bgColor: HexColor("#252942"),
               blurRadius: 0,
               spreadRadius: 0,
-              obscureText: true,
+              label: "Subject",
             ),
             sizedh2,
+            CommonTextField(
+              controller: AuthController.authController.userQualification,
+              prefixIcon: Icon(
+                LineariconsFree.graduation_hat,
+                color: Colors.white.withOpacity(0.5),
+              ),
+              bgColor: HexColor("#252942"),
+              blurRadius: 0,
+              spreadRadius: 0,
+              label: "Qualification",
+            ),
             sizedh2,
-            Align(
-              alignment: Alignment.center,
-              child: Container(
-                height: height * 0.055,
-                width: width * 0.25,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: tfRadius,
+            CommonTextField(
+              controller: AuthController.authController.userPhoneNumber,
+              prefixIcon: Icon(
+                Icons.phone,
+                color: Colors.white.withOpacity(0.5),
+              ),
+              bgColor: HexColor("#252942"),
+              blurRadius: 0,
+              spreadRadius: 0,
+              label: "Phone number",
+            ),
+            sizedh2,
+            Center(
+              child: ElevatedButton(
+                onPressed: () async {
+                  await AuthController.authController.addUserDetails();
+                  await AuthController.authController
+                      .snackBar("Updated Successfully", color: Colors.green);
+                  Future.delayed(const Duration(seconds: 3))
+                      .whenComplete(() => Get.back());
+                  AuthController.authController.disposeTextField();
+                },
+                style: ElevatedButton.styleFrom(
+                  fixedSize: Size(height * 0.1, width * 0.11),
+                  primary: HexColor("#252942").withOpacity(0.3),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12), // <-- Radius
+                  ),
                 ),
                 child: const Center(
                   child: CommonText(

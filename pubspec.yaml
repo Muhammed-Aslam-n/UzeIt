@@ -40,6 +40,9 @@ dependencies:
   cloud_firestore: any
   image_picker: any
   firebase_storage: any
+  wc_form_validators: any
+  fluttericon: any
+  cached_network_image: any
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +70,7 @@ flutter:
   assets:
     - assets/images/bgImages/
     - assets/images/profile/
+    - assets/giphy/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
