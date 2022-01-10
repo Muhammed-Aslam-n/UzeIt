@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:uzit/constants/constants.dart';
 import 'package:uzit/controllers/auth_controller.dart';
-import 'package:uzit/widgets/widgets.dart';
 import 'package:get/get.dart';
-
-class SignUp extends StatelessWidget {
-  const SignUp({Key? key}) : super(key: key);
+import 'package:uzit/widgets/widgets.dart';
+class ForgottPassword extends StatelessWidget {
+  const ForgottPassword({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    AuthController.authController.disposeTextField();
+    final controller = Get.find<AuthController>();
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
     return GestureDetector(
@@ -39,10 +38,18 @@ class SignUp extends StatelessWidget {
                       height: height * 0.25,
                     ),
                     Align(
+                      alignment: Alignment.center,
+                      child: CommonHeaders(
+                        text: "\t\t   Reset",
+                        size: 38.0,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                    Align(
                       alignment: Alignment.centerRight,
                       child: CommonHeaders(
-                        text: "Sign Up\t",
-                        size: 56.0,
+                        text: "      Password",
+                        size: 38.0,
                         color: Colors.grey.shade600,
                       ),
                     ),
@@ -50,34 +57,26 @@ class SignUp extends StatelessWidget {
                       height: height * 0.1,
                     ),
                     CommonTextField(
-                      controller: AuthController.authController.emailController,
+                      controller: controller.emailController,
                       prefixIcon: const Icon(
                         Icons.email,
                         color: Colors.deepOrangeAccent,
                       ),
                       label: "Email",
                     ),
+                    sizedh1,
+                    const CommonText(text: "\t\t\t\t\t\t\t\t\t\t* Reset link will be sent to your email",color: Colors.white,),
                     sizedh2,
-                    sizedh2,
-                    CommonTextField(
-                      controller: AuthController.authController.passwordController,
-                      prefixIcon: const Icon(
-                        Icons.lock,
-                        color: Colors.deepOrangeAccent,
-                      ),
-                      label: "Password",
-                      obscureText: true,
-                    ),
                     sizedh2,
                     Align(
                       alignment: Alignment.center,
                       child: GestureDetector(
                         onTap: (){
-                          debugPrint("SignUp Button Clicked");
-                          AuthController.authController.register();
+                          debugPrint("Reset Button Clicked");
+                          AuthController.authController.resetPasswordUsingEmail();
                         },
                         child: Container(
-                          height: height * 0.065,
+                          height: height * 0.06,
                           width: width * 0.35,
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.2),
@@ -85,7 +84,7 @@ class SignUp extends StatelessWidget {
                           ),
                           child: const Center(
                             child: CommonText(
-                              text: "Sign In",
+                              text: "\t\tReset Password",
                               color: Colors.white,
                               size: 32.0,
                             ),

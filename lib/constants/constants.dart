@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:uzit/widgets/widgets.dart';
 
 const sizedh1 = SizedBox(
   height: 10,
@@ -23,3 +24,6 @@ final tfOutlineBorder = OutlineInputBorder(
     borderSide: tfBorderSide
 );
 
+final Shader linearGradient = LinearGradient(
+  colors: <Color>[HexColor("#f5ec99"), HexColor("#c3a660")],
+).createShader(const Rect.fromLTWH(0.0, 0.0, 200.0, 70.0));

@@ -1,19 +1,24 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:uzit/constants/constants.dart';
 import 'package:uzit/controllers/auth_controller.dart';
 import 'package:uzit/model/studentmodel.dart';
+import 'package:uzit/screens/updateprofile.dart';
 import 'package:uzit/widgets/widgets.dart';
 import 'package:get/get.dart';
-import 'package:wc_form_validators/wc_form_validators.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+
+var height, width;
 
 class UzitHome extends StatelessWidget {
   const UzitHome({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
-    var height = MediaQuery.of(context).size.height;
+    width = MediaQuery.of(context).size.width;
+    height = MediaQuery.of(context).size.height;
+    AuthController.authController.context = context;
     return SafeArea(
       child: Scaffold(
         backgroundColor: HexColor("#3b4254"),
@@ -24,65 +29,98 @@ class UzitHome extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 15,top: 20),
-                child: Stack(
+                padding: const EdgeInsets.only(left: 15, top: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Positioned(right: -20, top: 20, child: popupButton()),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    const SizedBox(height: 25,),
+                    Row(
                       children: [
-                        GetBuilder<AuthController>(
-                          id: "homeProfileArea",
-                          builder: (controller) => controller
-                                      .currentProfilePicture !=
-                                  null
-                              ? Container(
-                                  height: height * 0.15,
-                                  width: width * 0.6,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12),
-                                    image: DecorationImage(
-                                      image: NetworkImage(
-                                          controller.currentProfilePicture!),fit: BoxFit.fitWidth,
-                                    ),
-                                    ),
-                                )
-                              // SizedBox(
-                              //         height: height * 0.18,
-                              //         width: width * 0.18,
-                              //         child: CircleAvatar(
-                              //           backgroundImage: NetworkImage(
-                              //               controller.currentProfilePicture!),
-                              //         ),
-                              //       )
-                              //
-                              : SizedBox(
-                                  height: height * 0.18,
-                                  width: width * 0.18,
-                                  child: const CircleAvatar(
-                                    backgroundImage: AssetImage(
-                                        "assets/images/profile/noProfilePictureImage.png"),
-                                  ),
-                                ),
+                        Image.asset(
+                          "assets/icons/AppIcon2.png",
+                          height: 50,
+                          width: 50,
                         ),
-                        sizedh2,
-                        CommonHeaders(
-                          text:
-                              "Welcome , ${AuthController.authController.userName}",
-                          color: Colors.white.withOpacity(0.5),
+                        Text(
+                          "SchoLoger",
+                          style: TextStyle(
+                            fontFamily: "font6",
+                            fontSize: 40,
+                            foreground: Paint()..shader = linearGradient,
+                          ),
                         ),
-                        sizedh2,
-                        CommonText(
-                          text:
-                              "Create, Edit and Update all your Student Records",
-                          color: Colors.grey.shade600,
-                        )
+                        const Spacer(),
+                        GestureDetector(
+                          onTap: (){
+                            Get.to(const UpdateProfile());
+                          },
+                          child: Hero(
+                            tag: "userProfile_Hero",
+                            child: GetBuilder<AuthController>(
+                              id: "homeProfileArea",
+                              builder: (controller) => controller
+                                          .currentProfilePicture !=
+                                      null
+                                  ? ClipOval(
+                                      child: Image.network(
+                                        "${controller.currentProfilePicture}",
+                                        fit: BoxFit.cover,
+                                        height: height * 0.05,
+                                        width: width * 0.11,
+                                        loadingBuilder: (BuildContext context,
+                                            Widget child,
+                                            ImageChunkEvent? loadingProgress) {
+                                          if (loadingProgress == null) {
+                                            return child;
+                                          }
+                                          return Center(
+                                            child: Image.asset(
+                                              "assets/giphy/loadingGiphy.gif",
+                                              height: height * 0.09,
+                                              width: width * 0.09,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    )
+                                  : SizedBox(
+                                      height: height * 0.09,
+                                      width: width * 0.09,
+                                      child: const CircleAvatar(
+                                        backgroundImage: AssetImage(
+                                            "assets/images/profile/noProfilePictureImage.png"),
+                                      ),
+                                    ),
+                            ),
+                          ),
+                        ),
+                        sizedw2,
                       ],
+                    ),
+                    sizedh2,
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    CommonHeaders(
+                      text:
+                          "Welcome , ${AuthController.authController.userName}",
+                      color: Colors.white.withOpacity(0.5),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    CommonText(
+                      text:
+                          "Create, Edit and Update all your Student Records",
+                      color: Colors.grey.shade600,
+                    ),
+                    const SizedBox(
+                      height: 50,
                     ),
                   ],
                 ),
               ),
-              sizedh2,
+
               Flexible(
                   child: StreamBuilder<List<StudentData>>(
                 stream: AuthController.authController.readStudents(),
@@ -154,7 +192,8 @@ class UzitHome extends StatelessWidget {
     return FloatingActionButton(
       onPressed: () {
         debugPrint("Add Button Clicked");
-        showDialogueBox(context);
+        AuthController.authController.isUpdating = false;
+        showStudentFormSheet();
       },
       tooltip: "Add Student",
       child: const Icon(
@@ -165,66 +204,128 @@ class UzitHome extends StatelessWidget {
     );
   }
 
-  Widget buildStudents(StudentData student) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-        child: ListTile(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-          tileColor: HexColor("#424b5e"),
-          leading: Container(
-            height: double.maxFinite,
-            width: 60,
-            decoration: BoxDecoration(
-              border: Border(
-                right: BorderSide(
-                  color: HexColor("#6D788D"),
+  Widget buildStudents(StudentData student) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      child: GestureDetector(
+        onTap: () {
+          showDeleteConfirmation();
+        },
+        child: Slidable(
+          closeOnScroll: true,
+          key: UniqueKey(),
+          startActionPane: ActionPane(
+            motion: const ScrollMotion(),
+            children: [
+              SlidableAction(
+                onPressed: (f) {
+                  confirmDeletion(studentId: student.name);
+                },
+                backgroundColor: HexColor("#424b5e"),
+                foregroundColor: Colors.redAccent,
+                icon: Icons.delete,
+              ),
+              SlidableAction(
+                onPressed: (f) {
+                  AuthController.authController.setTextEditingControllers(
+                      name: student.name,
+                      mark: student.mark,
+                      className: student.className,
+                      regNum: student.rollNumber);
+                  showStudentFormSheet(updateId: student.name);
+                  AuthController.authController.isUpdating = true;
+                },
+                backgroundColor: HexColor("#424b5e"),
+                foregroundColor: Colors.green,
+                icon: Icons.edit,
+              ),
+            ],
+          ),
+          child: ListTile(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0)),
+            tileColor: HexColor("#424b5e"),
+            leading: Container(
+              height: double.maxFinite,
+              width: 60,
+              decoration: BoxDecoration(
+                border: Border(
+                  right: BorderSide(
+                    color: HexColor("#6D788D"),
+                  ),
                 ),
               ),
+              child: Center(
+                  child: CommonText(
+                      text: student.mark, color: HexColor("#94A3C1"))),
             ),
-            child: Center(
-                child:
-                    CommonText(text: student.mark, color: HexColor("#94A3C1"))),
-          ),
-          title: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-            child: CommonText(
-              text: student.name,
-              color: HexColor("#b0b6be"),
-              size: 14,
+            title: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+              child: CommonText(
+                text: student.name,
+                color: HexColor("#b0b6be"),
+                size: 14,
+              ),
             ),
-          ),
-          subtitle: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-            child: CommonText(
-              text: student.className,
-              color: HexColor("#94A3C1"),
-              size: 11,
+            subtitle: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              child: CommonText(
+                text: student.className,
+                color: HexColor("#94A3C1"),
+                size: 11,
+              ),
             ),
-          ),
-          trailing: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: CommonText(
-              text: student.rollNumber,
-              color: HexColor("#94A3C1"),
-              size: 11,
+            trailing: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: CommonText(
+                text: student.rollNumber,
+                color: HexColor("#94A3C1"),
+                size: 11,
+              ),
             ),
           ),
         ),
-      );
+      ),
+    );
+  }
 
-  showDialogueBox(context) {
+  confirmDeletion({required studentId}) async {
+    await Get.defaultDialog(
+      title: "Delete",
+      middleText: "Do you really want to delete ?",
+      radius: 15,
+      textCancel: "No",
+      textConfirm: "Yes",
+      onCancel: () {},
+      onConfirm: () {
+        AuthController.authController.deleteStudent(studentId: studentId);
+        Future.delayed(const Duration(seconds: 1))
+            .whenComplete(() => showDeleteConfirmation());
+        Get.back();
+      },
+      barrierDismissible: true,
+    );
+  }
+
+  showDeleteConfirmation() {
+    Get.snackbar(
+      "Delete",
+      "Deleted Succeccfully ✓",
+      snackPosition: SnackPosition.BOTTOM,
+      padding: const EdgeInsets.all(18),
+      margin: const EdgeInsets.all(18),
+      colorText: Colors.green,
+    );
+  }
+
+  showStudentFormSheet({updateId}) {
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
-    return showModalBottomSheet(
-      isScrollControlled: true,
-      isDismissible: true,
-      enableDrag: true,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      context: context,
-      builder: (context) => Form(
+    Get.bottomSheet(
+      Form(
         key: formKey,
         child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.8,
-          width: MediaQuery.of(context).size.width,
+          height: height * 0.65,
+          width: width,
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -280,9 +381,10 @@ class UzitHome extends StatelessWidget {
                     FilteringTextInputFormatter.allow(RegExp('[a-z.A-Z ]'))
                   ],
                 ),
+                sizedh2,
                 ElevatedButton(
                   onPressed: () async {
-                    validateAndSave(formKey);
+                    validateAndSave(formKey, updateId: updateId);
                   },
                   child: const Text("Save"),
                   style: ElevatedButton.styleFrom(
@@ -296,13 +398,19 @@ class UzitHome extends StatelessWidget {
           ),
         ),
       ),
+      backgroundColor: HexColor("#3b4254"),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      enableDrag: true,
+      isDismissible: true,
+      isScrollControlled: true,
     );
   }
-
-  void validateAndSave(formKey) async {
+  void validateAndSave(formKey, {updateId}) async {
     final FormState form = formKey.currentState;
     if (form.validate()) {
-      await AuthController.authController.addStudentDetails();
+      AuthController.authController.isUpdating
+          ? await AuthController.authController.updateStudent(updateId)
+          : await AuthController.authController.addStudentDetails();
       Get.back();
     }
   }

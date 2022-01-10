@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:uzit/constants/constants.dart';
 import 'package:uzit/controllers/auth_controller.dart';
+import 'package:uzit/screens/forgottpassword.dart';
 import 'package:uzit/widgets/widgets.dart';
 import 'package:get/get.dart';
 
@@ -10,7 +11,7 @@ class UzitLogin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<AuthController>();
+    AuthController.authController.disposeTextField();
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
     return GestureDetector(
@@ -56,16 +57,25 @@ class UzitLogin extends StatelessWidget {
                     ),
                     CommonTextField(
                       prefixIcon: const Icon(Icons.email),
-                      controller: controller.emailController,
+                      controller: AuthController.authController.emailController,
                       label: "Email",
                     ),
                     sizedh2,
                     sizedh2,
                     CommonTextField(
                       prefixIcon: const Icon(Icons.lock),
-                      controller: controller.passwordController,
+                      controller: AuthController.authController.passwordController,
                       label: "Password",
                       obscureText: true,
+                    ),
+                    sizedh1,
+                    Padding(
+                      padding: const EdgeInsets.only(left: 40),
+                      child: GestureDetector(
+                          onTap: (){
+                            Get.to(const ForgottPassword());
+                          },
+                          child: const Text("Forgott Password?",style: TextStyle(color: Colors.redAccent,decoration: TextDecoration.underline,fontSize: 12.5),)),
                     ),
                     sizedh2,
                     sizedh2,

@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:uzit/model/studentmodel.dart';
 import 'package:uzit/screens/home_uzit.dart';
 import 'package:uzit/screens/login_uzit.dart';
+import 'package:uzit/widgets/widgets.dart';
 
 class AuthController extends GetxController {
   static AuthController authController = Get.find();
@@ -75,6 +76,23 @@ class AuthController extends GetxController {
     disposeTextField();
   }
 
+  Future<void> resetPasswordUsingEmail() async {
+    Get.dialog(
+      Center(
+        child: CircularProgressIndicator(color: HexColor("#3b4254"),strokeWidth: 0.3,),
+      )
+    );
+    try {
+      await firebaseAuth.sendPasswordResetEmail(email: emailController.text.trim());
+      snackBar("Reset link has been sent to your email",title: "Reset Password",duration: 3);
+      disposeTextField();
+      Get.offAll(const UzitLogin());
+    } on FirebaseAuthException catch (exception) {
+      debugPrint(exception.toString());
+      disposeTextField();
+    }
+  }
+
   // Profile Picture integration
   File? imageFilePath;
   String? currentProfilePicture;
@@ -89,10 +107,10 @@ class AuthController extends GetxController {
     final storage =
         FirebaseStorage.instance.ref("profile_picture/$domainName/$domainName");
 
-    try{
+    try {
       await storage.getDownloadURL().then((value) =>
-      {value.isEmpty ? pUrl = null : pUrl = value, updateProfile()});
-    }catch(error){
+          {value.isEmpty ? pUrl = null : pUrl = value, updateProfile()});
+    } catch (error) {
       debugPrint("Object don't Exists");
     }
     debugPrint("Getting Link is $currentProfilePicture");
@@ -122,6 +140,7 @@ class AuthController extends GetxController {
   // FireStore Section
 
   final fireStoreDb = FirebaseFirestore.instance;
+
   TextEditingController studentName = TextEditingController(),
       mark = TextEditingController(),
       className = TextEditingController(),
@@ -131,38 +150,74 @@ class AuthController extends GetxController {
       userSubject = TextEditingController(),
       userPhoneNumber = TextEditingController();
 
+  setTextEditingControllers({name, mark, className, regNum}) {
+    studentName.text = name;
+    this.mark.text = mark;
+    this.className.text = className;
+    registerNumber.text = regNum;
+  }
+
   addUserDetails() async {
-    final docUser = fireStoreDb
+    final userDocument = fireStoreDb
         .collection("UzeIt")
         .doc(userName ?? 'errorCollections')
         .collection("userDetails")
         .doc(userName ?? 'errorData');
     final userData = UserData(
-        id: docUser.id,
+        id: userDocument.id,
         userName: userNameToRegister.text,
         userSubject: userSubject.text,
         userQualification: userQualification.text,
         userPhoneNumber: userPhoneNumber.text);
     final userDataToUpload = userData.toJson();
-    await docUser.set(userDataToUpload);
+    await userDocument.set(userDataToUpload);
     disposeTextField();
   }
 
+  bool isUpdating = false.obs();
+  BuildContext? context;
+
   addStudentDetails() async {
-    final docUser = fireStoreDb
+    final userDocument = fireStoreDb
         .collection("UzeIt")
         .doc(userName ?? 'errorCollections')
         .collection("studentDetails")
         .doc(studentName.text);
     final studentData = StudentData(
-        id: docUser.id,
+        id: userDocument.id,
         name: studentName.text,
         mark: mark.text,
         rollNumber: registerNumber.text,
         className: className.text);
     final dataToUpload = studentData.toJson();
-    await docUser.set(dataToUpload);
+    await userDocument.set(dataToUpload);
     disposeTextField();
+  }
+
+  updateStudent(dynamic id) {
+    final userDocument = fireStoreDb
+        .collection("UzeIt")
+        .doc(userName ?? 'errorCollections')
+        .collection("studentDetails")
+        .doc(id);
+    final studentData = StudentData(
+        id: userDocument.id,
+        name: studentName.text,
+        mark: mark.text,
+        rollNumber: registerNumber.text,
+        className: className.text);
+    final dataToUpload = studentData.toJson();
+    userDocument.update(dataToUpload);
+    disposeTextField();
+  }
+
+  deleteStudent({required dynamic studentId}) {
+    final userDocument = fireStoreDb
+        .collection("UzeIt")
+        .doc(userName ?? 'errorCollections')
+        .collection("studentDetails")
+        .doc(studentId);
+    userDocument.delete();
   }
 
   Stream<List<StudentData>> readStudents() {
@@ -177,29 +232,29 @@ class AuthController extends GetxController {
   }
 
   readUsers() async {
-    var docref = await fireStoreDb
+    var userDocument = await fireStoreDb
         .collection("UzeIt")
         .doc(userName ?? 'errorCollections')
         .collection("userDetails")
         .get();
-    try{
-      var result = docref.docs.last.data();
+    try {
+      var result = userDocument.docs.last.data();
       userNameToRegister.text = result['userName'];
       userQualification.text = result['userQualification'];
       userSubject.text = result['userSubject'];
       userPhoneNumber.text = result['userPhoneNumber'];
-    }catch(error){
+    } catch (error) {
       disposeTextField();
       debugPrint("No Details Found");
     }
   }
 
-  snackBar(error, {title, color}) {
+  snackBar(error, {title, color,duration}) {
     Get.snackbar(
       "",
       "",
       backgroundColor: color ?? Colors.redAccent,
-      duration: const Duration(seconds: 1),
+      duration: Duration(seconds: duration??1),
       margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
       snackPosition: SnackPosition.BOTTOM,
       titleText: Text(

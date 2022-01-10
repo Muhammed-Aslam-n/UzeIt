@@ -59,6 +59,7 @@ class CommonTextField extends StatelessWidget {
   final Icon? prefixIcon;
   final String? label;
   final bool obscureText;
+  final TextInputType? textInputType;
   final double? blurRadius, spreadRadius;
 
   const CommonTextField(
@@ -69,7 +70,7 @@ class CommonTextField extends StatelessWidget {
       this.obscureText = false,
       this.bgColor,
       this.blurRadius,
-      this.spreadRadius})
+      this.spreadRadius, this.textInputType = TextInputType.emailAddress})
       : super(key: key);
 
   @override
@@ -96,6 +97,7 @@ class CommonTextField extends StatelessWidget {
         controller: controller,
         textInputAction: TextInputAction.next,
         obscureText: obscureText,
+        keyboardType: textInputType,
         decoration: InputDecoration(
           fillColor: Colors.white,
           floatingLabelBehavior: FloatingLabelBehavior.never,
