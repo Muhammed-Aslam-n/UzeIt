@@ -30,9 +30,9 @@ class Uzit extends StatelessWidget {
       // initialRoute: '/',
       home: const SplashScreen(),
       getPages: [
-        GetPage(name: '/', page: ()=>const UzitLogin()),
+        GetPage(name: '/', page: ()=>const SchoLogerLogin()),
         GetPage(name: '/SignUpPage', page: ()=>const SignUp()),
-        GetPage(name: '/home', page: ()=>const UzitHome()),
+        GetPage(name: '/home', page: ()=>const SchoLoger()),
         GetPage(name: '/updateProfile', page: ()=>const UpdateProfile()),
       ],
     );

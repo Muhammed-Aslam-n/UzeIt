@@ -6,8 +6,8 @@ import 'package:uzit/screens/forgottpassword.dart';
 import 'package:uzit/widgets/widgets.dart';
 import 'package:get/get.dart';
 
-class UzitLogin extends StatelessWidget {
-  const UzitLogin({Key? key}) : super(key: key);
+class SchoLogerLogin extends StatelessWidget {
+  const SchoLogerLogin({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

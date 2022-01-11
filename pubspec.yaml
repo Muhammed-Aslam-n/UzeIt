@@ -42,7 +42,6 @@ dependencies:
   firebase_storage: any
   wc_form_validators: any
   fluttericon: any
-  cached_network_image: any
   flutter_slidable: any
 
 dev_dependencies:

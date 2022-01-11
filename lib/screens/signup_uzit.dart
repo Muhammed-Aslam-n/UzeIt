@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:uzit/constants/constants.dart';
 import 'package:uzit/controllers/auth_controller.dart';
 import 'package:uzit/widgets/widgets.dart';
-import 'package:get/get.dart';
-
 class SignUp extends StatelessWidget {
   const SignUp({Key? key}) : super(key: key);
 

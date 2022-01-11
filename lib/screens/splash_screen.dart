@@ -4,10 +4,10 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return const SizedBox(
       width: double.maxFinite,
       height: double.maxFinite,
-      child: const Center(child: CircularProgressIndicator(color: Colors.redAccent,strokeWidth: 0.5,),),
+      child: Center(child: CircularProgressIndicator(color: Colors.redAccent,strokeWidth: 0.5,),),
     );
   }
 }

@@ -1,24 +1,21 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:uzit/constants/constants.dart';
 import 'package:uzit/controllers/auth_controller.dart';
 import 'package:uzit/model/studentmodel.dart';
-import 'package:uzit/screens/updateprofile.dart';
 import 'package:uzit/widgets/widgets.dart';
 import 'package:get/get.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
-var height, width;
+dynamic height, width;
 
-class UzitHome extends StatelessWidget {
-  const UzitHome({Key? key}) : super(key: key);
+class SchoLoger extends StatelessWidget {
+  const SchoLoger({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
-    AuthController.authController.context = context;
     return SafeArea(
       child: Scaffold(
         backgroundColor: HexColor("#3b4254"),
@@ -33,70 +30,57 @@ class UzitHome extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 25,),
-                    Row(
-                      children: [
-                        Image.asset(
-                          "assets/icons/AppIcon2.png",
-                          height: 50,
-                          width: 50,
-                        ),
-                        Text(
-                          "SchoLoger",
-                          style: TextStyle(
-                            fontFamily: "font6",
-                            fontSize: 40,
-                            foreground: Paint()..shader = linearGradient,
-                          ),
-                        ),
-                        const Spacer(),
-                        GestureDetector(
-                          onTap: (){
-                            Get.to(const UpdateProfile());
-                          },
-                          child: Hero(
-                            tag: "userProfile_Hero",
-                            child: GetBuilder<AuthController>(
-                              id: "homeProfileArea",
-                              builder: (controller) => controller
-                                          .currentProfilePicture !=
-                                      null
-                                  ? ClipOval(
-                                      child: Image.network(
-                                        "${controller.currentProfilePicture}",
-                                        fit: BoxFit.cover,
-                                        height: height * 0.05,
-                                        width: width * 0.11,
-                                        loadingBuilder: (BuildContext context,
-                                            Widget child,
-                                            ImageChunkEvent? loadingProgress) {
-                                          if (loadingProgress == null) {
-                                            return child;
-                                          }
-                                          return Center(
-                                            child: Image.asset(
-                                              "assets/giphy/loadingGiphy.gif",
-                                              height: height * 0.09,
-                                              width: width * 0.09,
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    )
-                                  : SizedBox(
-                                      height: height * 0.09,
-                                      width: width * 0.09,
-                                      child: const CircleAvatar(
-                                        backgroundImage: AssetImage(
-                                            "assets/images/profile/noProfilePictureImage.png"),
-                                      ),
-                                    ),
-                            ),
-                          ),
-                        ),
-                        sizedw2,
-                      ],
+                    const SizedBox(
+                      height: 25,
                     ),
+
+                    ListTile(
+                      horizontalTitleGap: -5,
+                      minVerticalPadding: 12,
+                      leading: Image.asset(
+                        "assets/icons/AppIcon2.png",
+                        height: 80,
+                        width: 60,
+                      ),
+                      isThreeLine: true,
+                      title: Text(
+                        "SchoLoger",
+                        style: TextStyle(
+                          fontFamily: "font6",
+                          fontSize: 35,
+                          foreground: Paint()..shader = linearGradient,
+                        ),
+                      ),
+                      subtitle: Text(
+                        "\t\t\t\t\t\t\t\t\tImpression Matters",
+                        style: TextStyle(
+                          fontFamily: "font3",
+                          fontSize: 10,
+                          foreground: Paint()..shader = linearGradient,
+                        ),
+                      ),
+                      trailing: popupButton(),
+                    ),
+                    // Row(
+                    //   children: [
+                    //     Image.asset(
+                    //       "assets/icons/AppIcon2.png",
+                    //       height: 50,
+                    //       width: 50,
+                    //     ),
+                    //     Text(
+                    //       "SchoLoger",
+                    //       style: TextStyle(
+                    //         fontFamily: "font6",
+                    //         fontSize: 40,
+                    //         foreground: Paint()..shader = linearGradient,
+                    //       ),
+                    //     ),
+                    //     const Spacer(),
+                    //     popupButton(),
+                    //     sizedw2,
+                    //   ],
+                    // ),
                     sizedh2,
                     const SizedBox(
                       height: 30,
@@ -110,8 +94,7 @@ class UzitHome extends StatelessWidget {
                       height: 20,
                     ),
                     CommonText(
-                      text:
-                          "Create, Edit and Update all your Student Records",
+                      text: "Create, Edit and Update all your Student Records",
                       color: Colors.grey.shade600,
                     ),
                     const SizedBox(
@@ -120,7 +103,6 @@ class UzitHome extends StatelessWidget {
                   ],
                 ),
               ),
-
               Flexible(
                   child: StreamBuilder<List<StudentData>>(
                 stream: AuthController.authController.readStudents(),
@@ -152,9 +134,44 @@ class UzitHome extends StatelessWidget {
 
   popupButton() {
     return PopupMenuButton(
-      icon: Icon(
-        Icons.more_vert,
-        color: Colors.grey.shade600,
+      offset: const Offset(-20, 50),
+      iconSize: 50,
+      icon: GetBuilder<AuthController>(
+        id: "homeProfileArea",
+        builder: (controller) => controller.currentProfilePicture != null
+            ? Container(
+                height: 80,
+                width: 40,
+                decoration:
+                    const BoxDecoration(color: Colors.grey, shape: BoxShape.circle),
+                child: ClipOval(
+                  child: Image.network(
+                    "${controller.currentProfilePicture}",
+                    fit: BoxFit.cover,
+                    loadingBuilder: (BuildContext context, Widget child,
+                        ImageChunkEvent? loadingProgress) {
+                      if (loadingProgress == null) {
+                        return child;
+                      }
+                      return Center(
+                        child: Image.asset(
+                          "assets/giphy/loadingGiphy.gif",
+                          height: height * 0.09,
+                          width: width * 0.09,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              )
+            : SizedBox(
+                height: height * 0.09,
+                width: width * 0.09,
+                child: const CircleAvatar(
+                  backgroundImage: AssetImage(
+                      "assets/images/profile/noProfilePictureImage.png"),
+                ),
+              ),
       ),
       color: Colors.red,
       itemBuilder: (context) => [
@@ -171,6 +188,19 @@ class UzitHome extends StatelessWidget {
           ),
           value: 1,
         ),
+        // PopupMenuItem(
+        //   child: TextButton(
+        //     onPressed: () {
+        //       Get.back();
+        //       Get.to(()=>const UpdateEmailAndPassword());
+        //     },
+        //     child: const Text(
+        //       "Update Password",
+        //       style: TextStyle(color: Colors.white),
+        //     ),
+        //   ),
+        //   value: 2,
+        // ),
         PopupMenuItem(
           child: TextButton(
             onPressed: () async {
@@ -182,7 +212,7 @@ class UzitHome extends StatelessWidget {
               style: TextStyle(color: Colors.white),
             ),
           ),
-          value: 1,
+          value: 3,
         ),
       ],
     );
@@ -310,7 +340,7 @@ class UzitHome extends StatelessWidget {
   showDeleteConfirmation() {
     Get.snackbar(
       "Delete",
-      "Deleted Succeccfully ✓",
+      "Deleted Successfully ✓",
       snackPosition: SnackPosition.BOTTOM,
       padding: const EdgeInsets.all(18),
       margin: const EdgeInsets.all(18),
@@ -405,6 +435,7 @@ class UzitHome extends StatelessWidget {
       isScrollControlled: true,
     );
   }
+
   void validateAndSave(formKey, {updateId}) async {
     final FormState form = formKey.currentState;
     if (form.validate()) {
