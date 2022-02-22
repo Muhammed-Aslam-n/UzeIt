@@ -4,10 +4,8 @@ import 'package:uzit/controllers/auth_controller.dart';
 import 'package:uzit/widgets/widgets.dart';
 class SignUp extends StatelessWidget {
   const SignUp({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
-    AuthController.authController.disposeTextField();
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
     return GestureDetector(
@@ -73,6 +71,7 @@ class SignUp extends StatelessWidget {
                         onTap: (){
                           debugPrint("SignUp Button Clicked");
                           AuthController.authController.register();
+                          AuthController.authController.disposeTextField();
                         },
                         child: Container(
                           height: height * 0.065,

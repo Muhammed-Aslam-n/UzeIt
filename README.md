@@ -1,4 +1,4 @@
-# uzit
+# SchoLoger
 
 A new Flutter project.
 

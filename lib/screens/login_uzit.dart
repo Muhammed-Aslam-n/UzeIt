@@ -11,7 +11,6 @@ class SchoLogerLogin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AuthController.authController.disposeTextField();
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
     return GestureDetector(
@@ -85,6 +84,7 @@ class SchoLogerLogin extends StatelessWidget {
                         onTap: () {
                           debugPrint("Login Button Clicked");
                           AuthController.authController.userLogin();
+                          AuthController.authController.disposeTextField();
                         },
                         child: Container(
                           height: height * 0.065,
@@ -96,7 +96,7 @@ class SchoLogerLogin extends StatelessWidget {
                                   image: ExactAssetImage(
                                     "assets/images/bgImages/bgButton1.jpg",
                                   ),
-                                  fit: BoxFit.cover)),
+                                  fit: BoxFit.cover),),
                           child: const Center(
                               child: CommonText(
                             text: "Sign In",
@@ -124,7 +124,10 @@ class SchoLogerLogin extends StatelessWidget {
                                 fontWeight: FontWeight.w600,
                               ),
                               recognizer: TapGestureRecognizer()
-                                ..onTap = () => Get.toNamed('SignUpPage'),
+                                ..onTap = () {
+                                  AuthController.authController.disposeTextField();
+                                  Get.toNamed('SignUpPage');
+                                },
                             ),
                           ],
                         ),
